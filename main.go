@@ -1,3 +1,6 @@
+// Package main contains the main function which
+// provides a script making symlinks from a definition
+// in a file in JSON format { "target" : [ "link1", "link2"] }
 package main
 
 import (
@@ -11,8 +14,11 @@ import (
 )
 
 // thank you https://stackoverflow.com/a/61837617
+
+// StringSlice is a slice of strings used for more compact form
 type StringSlice []string
 
+// UnmarshalJSON is a custom unmarshalling implementation for string slices
 func (ss *StringSlice) UnmarshalJSON(data []byte) error {
 	fmt.Println(string(data))
 	if data[0] == '[' {
@@ -39,6 +45,9 @@ func main() {
 	fmt.Printf("Working directory: %s\n", wd)
 	sourceFile := os.Args[1]
 	sourceBytes, err := os.ReadFile(sourceFile)
+	if err != nil {
+		panic(err)
+	}
 	var linkMap map[string]StringSlice
 	err = json.Unmarshal([]byte(sourceBytes), &linkMap)
 	if err != nil {
